@@ -40,6 +40,14 @@ def main() -> None:
     path = os.path.join(out_dir, "entry.txt")
     with open(path, "w", encoding="utf-8") as f:
         f.write(LINE)
+    # Read-back verification: confirm what landed on disk matches LINE
+    # exactly, so a truncated or corrupted write never ships silently.
+    with open(path, "r", encoding="utf-8") as f:
+        written = f.read()
+    if written != LINE:
+        print("ERROR: read-back mismatch: entry.txt does not match LINE",
+              file=sys.stderr)
+        sys.exit(1)
 
 
 if __name__ == "__main__":
